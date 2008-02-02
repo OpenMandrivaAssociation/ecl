@@ -1,6 +1,6 @@
 %define name    ecl
 %define version 0.9j
-%define release %mkrel 2
+%define release %mkrel 3
 %define realversion 0.9j-p1
 
 Name:           %{name}
@@ -38,7 +38,7 @@ to C, which can produce standalone executables.
 %package doc
 Summary:      Documentation for Embeddable Common-Lisp
 Group:        Development/Other
-Requires:     %{name}=%{version}-%{release}
+Requires:     %{name} = %{version}-%{release}
 
 %description doc
 ECL (Embeddable Common-Lisp) is an interpreter of the Common-Lisp
