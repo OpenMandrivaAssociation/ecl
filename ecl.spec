@@ -38,7 +38,7 @@ to C, which can produce standalone executables.
 %package doc
 Summary:      Documentation for Embeddable Common-Lisp
 Group:        Development/Other
-Requires:     %{name}=%{epoch}:%{version}-%{release}
+Requires:     %{name}=%{version}-%{release}
 
 %description doc
 ECL (Embeddable Common-Lisp) is an interpreter of the Common-Lisp
