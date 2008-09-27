@@ -1,6 +1,6 @@
 %define name    ecl
 %define version 0.9j
-%define release %mkrel 5
+%define release %mkrel 6
 %define realversion 0.9j-p1
 
 Name:           %{name}
