@@ -60,8 +60,9 @@ find -name CVS | xargs rm -rf
 %build
 CONFIGURE_TOP=. \
 %configure --enable-boehm=system --enable-threads=yes --with-clx --with-x
-%make
-(cd build/doc; %make)
+# Parallel make does not work
+make
+(cd build/doc; make)
 
 %install
 %makeinstall_std
