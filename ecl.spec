@@ -1,7 +1,10 @@
-%define name    ecl
-%define version 0.9j
-%define release %mkrel 6
-%define realversion 0.9j-p1
+%define name			ecl
+%define version			9.7.1
+%define release			%mkrel 1
+%define ecllibdir		%{_libdir}/%{name}-%{version}
+
+%define before_configure	true
+%define _disable_libtoolize	%{nil}
 
 Name:           %{name}
 Version:        %{version}
@@ -10,7 +13,7 @@ Summary:        Embeddable Common-Lisp
 Group:          Development/Other
 License:        LGPLv2+
 URL:            http://ecls.sourceforge.net
-Source:         http://switch.dl.sourceforge.net/sourceforge/ecls/%{name}-%{realversion}.tgz
+Source:         http://switch.dl.sourceforge.net/sourceforge/ecls/%{name}-%{version}.tgz
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}
 
 BuildRequires:  m4
@@ -55,25 +58,25 @@ perl -pi -e 's|-Wl,--rpath,~A|-Wl,--rpath,%{_libdir}/ecl|' src/configure
 find -name CVS | xargs rm -rf
 
 %build
+CONFIGURE_TOP=. \
 %configure --enable-boehm=system --enable-threads=yes --with-clx --with-x
-# Parallel make does not work
-make
-(cd build/doc; make all html)
+%make
+(cd build/doc; %make)
 
 %install
 %makeinstall_std
 (cd build/doc; %makeinstall_std)
 rm -fr %{buildroot}%{_infodir}/dir
 rm -fr %{buildroot}%{_docdir}
-rm %{buildroot}/%{_libdir}/ecl/BUILD-STAMP
-find %{buildroot}%{_libdir}/ecl -name '*.lsp' | xargs chmod 0644
+rm -f %{buildroot}/%{ecllibdir}/BUILD-STAMP
+find %{buildroot}%{ecllibdir} -name '*.lsp' | xargs chmod 0644 ||:
 
 %files
 %defattr(-,root,root,-)
 %{_bindir}/ecl
 %{_bindir}/ecl-config
-%{_libdir}/ecl
-%{_libdir}/libecl.so
+%{ecllibdir}
+%{_libdir}/libecl.so*
 %{_includedir}/ecl
 %{_mandir}/man*/*
 %{_infodir}/*
@@ -81,5 +84,4 @@ find %{buildroot}%{_libdir}/ecl -name '*.lsp' | xargs chmod 0644
 
 %files doc
 %defattr(-,root,root,-)
-%doc build/doc/*.html build/doc/ecl build/doc/ecldev
 %doc examples
