@@ -1,5 +1,5 @@
 %define name			ecl
-%define version			9.10.2
+%define version			9.12.3
 %define release			%mkrel 1
 %define ecllibdir		%{_libdir}/%{name}-%{version}
 
