@@ -1,6 +1,6 @@
 %define name			ecl
 %define version			9.12.3
-%define release			%mkrel 1
+%define release			%mkrel 2
 %define ecllibdir		%{_libdir}/%{name}-%{version}
 
 %define before_configure	true
