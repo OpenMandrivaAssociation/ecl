@@ -1,6 +1,6 @@
 %define name			ecl
-%define version			9.12.3
-%define release			%mkrel 2
+%define version			10.4.1
+%define release			%mkrel 1
 %define ecllibdir		%{_libdir}/%{name}-%{version}
 
 %define before_configure	true
@@ -13,7 +13,7 @@ Summary:        Embeddable Common-Lisp
 Group:          Development/Other
 License:        LGPLv2+
 URL:            http://ecls.sourceforge.net
-Source:         http://switch.dl.sourceforge.net/sourceforge/ecls/%{name}-%{version}.tgz
+Source:         http://switch.dl.sourceforge.net/sourceforge/ecls/%{name}-%{version}.tar.gz
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}
 
 BuildRequires:  m4
@@ -62,11 +62,23 @@ CONFIGURE_TOP=. \
 %configure --enable-boehm=system --enable-threads=yes --with-clx --with-x
 # Parallel make does not work
 make
-(cd build/doc; make)
+
+# documentation build broken
+#(cd build/doc; make)
 
 %install
 %makeinstall_std
-(cd build/doc; %makeinstall_std)
+
+# documentation build broken
+#(cd build/doc; %makeinstall_std)
+
+# install man pages without invoking broken make rules and remove wrongly
+# installed files
+mkdir -p %{buildroot}/%{_mandir}/man1
+cp -f build/doc/ecl{,-config}.man %{buildroot}/%{_mandir}/man1
+lzma %{buildroot}/%{_mandir}/man1/*
+rm -f %{buildroot}%{_libdir}/{Copyright,LGPL}
+
 rm -fr %{buildroot}%{_infodir}/dir
 rm -fr %{buildroot}%{_docdir}
 rm -f %{buildroot}/%{ecllibdir}/BUILD-STAMP
@@ -80,7 +92,6 @@ find %{buildroot}%{ecllibdir} -name '*.lsp' | xargs chmod 0644 ||:
 %{_libdir}/libecl.so*
 %{_includedir}/ecl
 %{_mandir}/man*/*
-%{_infodir}/*
 %doc ANNOUNCEMENT Copyright
 
 %files doc
