@@ -17,8 +17,9 @@ Source:         http://switch.dl.sourceforge.net/sourceforge/ecls/%{name}-%{vers
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}
 
 BuildRequires:  m4
-BuildRequires:	texinfo
 BuildRequires:  texi2html
+BuildRequires:	texinfo
+BuildRequires:	texlive
 BuildRequires:  gmp-devel
 BuildRequires:  libgc-devel
 BuildRequires:  libx11-devel
