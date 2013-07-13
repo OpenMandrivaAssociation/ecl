@@ -1,0 +1,324 @@
+--- ./src/c/alloc_2.d.orig	2013-05-27 14:37:36.000000000 -0600
++++ ./src/c/alloc_2.d	2013-06-03 13:57:21.502637391 -0600
+@@ -767,8 +767,6 @@ to_bitmap(void *x, void *y)
+ void
+ init_alloc(void)
+ {
+-        union cl_lispunion o;
+-        struct ecl_cons c;
+ 	int i;
+ 	if (alloc_initialized) return;
+ 	alloc_initialized = TRUE;
+--- ./src/c/cinit.d.orig	2013-05-27 14:37:36.000000000 -0600
++++ ./src/c/cinit.d	2013-06-03 13:48:06.000243968 -0600
+@@ -173,6 +173,7 @@ static cl_object si_simple_toplevel ()
+                         ecl_prin1(sentence, output);
+                 }
+         } ECL_CATCH_ALL_END;
++        return ECL_NIL;
+ }
+ 
+ int
+--- ./src/c/compiler.d.orig	2013-05-27 14:37:36.000000000 -0600
++++ ./src/c/compiler.d	2013-06-03 13:49:49.992131142 -0600
+@@ -3081,7 +3081,7 @@ si_valid_function_name_p(cl_object name)
+ cl_object
+ si_make_lambda(cl_object name, cl_object rest)
+ {
+-	cl_object lambda;
++	cl_object lambda = ECL_NIL;
+         const cl_env_ptr the_env = ecl_process_env();
+ 	volatile cl_compiler_env_ptr old_c_env = the_env->c_env;
+ 	struct cl_compiler_env new_c_env;
+--- ./src/c/ffi.d.orig	2013-05-27 14:37:36.000000000 -0600
++++ ./src/c/ffi.d	2013-06-03 13:47:07.536306670 -0600
+@@ -701,7 +701,7 @@ si_load_foreign_module(cl_object filenam
+ #if !defined(ENABLE_DLOPEN)
+ 	FEerror("SI:LOAD-FOREIGN-MODULE does not work when ECL is statically linked", 0);
+ #else
+-	cl_object output;
++	cl_object output = ECL_NIL;
+ 
+ # ifdef ECL_THREADS
+ 	mp_get_lock(1, ecl_symbol_value(@'mp::+load-compile-lock+'));
+--- ./src/c/file.d.orig	2013-05-27 14:37:36.000000000 -0600
++++ ./src/c/file.d	2013-06-03 13:59:26.767502270 -0600
+@@ -1101,7 +1101,7 @@ static int
+ utf_8_encoder(cl_object stream, unsigned char *buffer, ecl_character c)
+ {
+ 	int nbytes;
+-	if (c < 0) {
++	if (c < 0 || c > 0x1FFFFFL) {
+ 		nbytes = 0;
+ 	} else if (c <= 0x7F) {
+ 		buffer[0] = c;
+@@ -1116,7 +1116,7 @@ utf_8_encoder(cl_object stream, unsigned
+ 		buffer[1] = (c & 0x3f) | 0x80; c >>= 6;
+ 		buffer[0] = c | 0xE0;
+ 		nbytes = 3;
+-	} else if (c <= 0x1FFFFFL) {
++	} else {
+ 		buffer[3] = (c & 0x3f) | 0x80; c >>= 6;
+ 		buffer[2] = (c & 0x3f) | 0x80; c >>= 6;
+ 		buffer[1] = (c & 0x3f) | 0x80; c >>= 6;
+@@ -5110,7 +5110,7 @@ ecl_open_stream(cl_object fn, enum ecl_s
+ 		FEerror("Illegal stream mode ~S", 1, ecl_make_fixnum(smm));
+ 	}
+ 	if (flags & ECL_STREAM_C_STREAM) {
+-		FILE *fp;
++		FILE *fp = NULL;
+ 		safe_close(f);
+ 		/* We do not use fdopen() because Windows seems to
+ 		 * have problems with the resulting streams. Furthermore, even for
+--- ./src/c/interpreter.d.orig	2013-05-27 14:37:36.000000000 -0600
++++ ./src/c/interpreter.d	2013-06-03 13:57:53.047602998 -0600
+@@ -273,7 +273,7 @@ ecl_interpret(cl_object frame, cl_object
+         volatile cl_index frame_index = 0;
+ 	cl_opcode *vector = (cl_opcode*)bytecodes->bytecodes.code;
+ 	cl_object *data = bytecodes->bytecodes.data->vector.self.t;
+-	cl_object reg0, reg1, lex_env = env;
++	cl_object reg0 = ECL_NIL, reg1 = ECL_NIL, lex_env = env;
+ 	cl_index narg;
+ 	struct ecl_stack_frame frame_aux;
+ 	volatile struct ecl_ihs_frame ihs;
+--- ./src/c/num_log.d.orig	2013-05-27 14:37:36.000000000 -0600
++++ ./src/c/num_log.d	2013-06-03 13:56:20.670703625 -0600
+@@ -476,7 +476,7 @@ cl_object
+ si_bit_array_op(cl_object o, cl_object x, cl_object y, cl_object r)
+ {
+ 	cl_fixnum i, j, n, d;
+-	cl_object r0;
++	cl_object r0 = ECL_NIL;
+ 	bit_operator op;
+ 	bool replace = FALSE;
+ 	int xi, yi, ri;
+--- ./src/c/read.d.orig	2013-05-27 14:37:36.000000000 -0600
++++ ./src/c/read.d	2013-06-03 13:49:09.984174689 -0600
+@@ -2328,7 +2328,7 @@ ecl_init_module(cl_object block, void (*
+ 	volatile cl_object x;
+ 	cl_index i, len, perm_len, temp_len;
+ 	cl_object in;
+-	cl_object *VV, *VVtemp = 0;
++	cl_object *VV = 0, *VVtemp = 0;
+ 
+ 	if (block == NULL)
+                 block = ecl_make_codeblock();
+--- ./src/c/serialize.d.orig	2013-05-27 14:37:36.000000000 -0600
++++ ./src/c/serialize.d	2013-06-03 13:59:54.822472370 -0600
+@@ -121,7 +121,7 @@ fix_to_ptr(cl_object ptr)
+ static cl_object
+ enqueue(pool_t pool, cl_object what)
+ {
+-        cl_object record, index;
++        cl_object index;
+         if (ECL_FIXNUMP(what) || ECL_CHARACTERP(what) || what == OBJNULL) {
+                 return what;
+         }
+--- ./src/c/unixfsys.d.orig	2013-05-27 14:37:36.000000000 -0600
++++ ./src/c/unixfsys.d	2013-06-03 13:51:45.424004454 -0600
+@@ -462,7 +462,6 @@ ecl_file_len(int f)
+ 
+ @(defun rename-file (oldn newn &key (if_exists @':error'))
+ 	cl_object old_filename, new_filename, old_truename, new_truename;
+-	int error;
+ @
+ 
+ 	/* 1) Get the old filename, and complain if it has wild components,
+@@ -506,6 +505,9 @@ ecl_file_len(int f)
+                         1, if_exists);
+ 	}
+         {
++#if defined(ECL_MS_WINDOWS_HOST)
++                int error;
++#endif
+                 ecl_disable_interrupts();
+ #if defined(ECL_MS_WINDOWS_HOST)
+ 		error = SetErrorMode(0);
+@@ -666,7 +668,10 @@ ecl_homedir_pathname(cl_object user)
+ {
+ 	cl_index i;
+ 	cl_object namestring;
+-	const char *h, *d;
++	const char *h;
++#if defined(ECL_MS_WINDOWS_HOST)
++	const char *d;
++#endif
+ 	if (!Null(user)) {
+ #ifdef HAVE_PWD_H
+ 		struct passwd *pwent = NULL;
+--- ./src/clos/conditions.lsp.orig	2013-05-27 14:37:36.000000000 -0600
++++ ./src/clos/conditions.lsp	2013-06-27 13:05:42.397323302 -0600
+@@ -96,7 +96,7 @@
+     (cons (loop for i from 1
+ 	     for n in (if (atom names) (list names) names)
+ 	     for f = (simple-restart-function tag i)
+-	     collect (cons name f))
++	     collect (cons n f))
+ 	  *handler-clusters*)))
+ 
+ (defmacro restart-bind (bindings &body forms)
+--- ./src/cmp/cmpcatch.lsp.orig	2013-05-27 14:37:36.000000000 -0600
++++ ./src/cmp/cmpcatch.lsp	2013-06-27 10:37:19.665384986 -0600
+@@ -74,6 +74,7 @@
+     (let ((*unwind-exit* (cons 'FRAME *unwind-exit*))
+ 	  (*destination* 'VALUES))
+       (c2expr* form))
++    (wt-nl "  next_fr = NULL;")
+     (wt-nl "}")
+     (wt-nl "ecl_frs_pop(cl_env_copy);")
+     ;; Here we save the values of the form which might have been
+--- ./src/cmp/cmpmain.lsp.orig	2013-05-27 14:37:36.000000000 -0600
++++ ./src/cmp/cmpmain.lsp	2013-06-27 09:19:40.694782790 -0600
+@@ -269,7 +269,8 @@ void ~A(cl_object cblock)
+ 	Cblock->cblock.next = current;
+ }
+ 	~A
+-}")
++}
++")
+ 
+ (defconstant +lisp-program-main+ "
+ extern int
+@@ -282,7 +283,8 @@ main(int argc, char **argv)
+ 	~A
+ 	} ECL_CATCH_ALL_END;
+ 	si_exit(0);
+-}")
++}
++")
+ 
+ (defconstant +lisp-library-main+ "
+ extern int
+@@ -294,7 +296,8 @@ extern int
+ 	ecl_init_module(OBJNULL, ~A);
+ 	~A
+ 	} ECL_CATCH_ALL_END;
+-}")
++}
++")
+ 
+ #+:win32
+ (defconstant +lisp-program-winmain+ "
+@@ -312,7 +315,8 @@ WinMain(HINSTANCE hInstance, HINSTANCE h
+ 	~A
+ 	} ECL_CATCH_ALL_END;
+ 	si_exit(0);
+-}")
++}
++")
+ 
+ (defun guess-kind (pathname)
+   "Given a file name, guess whether it is an object file, a library, a program
+--- ./src/cmp/cmptop.lsp.orig	2013-05-27 14:37:36.000000000 -0600
++++ ./src/cmp/cmptop.lsp	2013-06-27 10:45:20.056839502 -0600
+@@ -436,7 +436,7 @@
+     (wt-nl "volatile cl_object lex" *level* "[" *max-lex* "];"))
+   (when (plusp *max-env*)
+     (unless (eq closure-type 'CLOSURE)
+-      (wt-nl "cl_object " *volatile* "env0;"))
++      (wt-nl "cl_object " *volatile* "env0 = ECL_NIL;"))
+     ;; Note that the closure structure has to be marked volatile
+     ;; or else GCC may optimize away writes into it because it
+     ;; does not know it shared with the rest of the world.
+--- ./src/cmp/cmpwt.lsp.orig	2013-05-27 14:37:36.000000000 -0600
++++ ./src/cmp/cmpwt.lsp	2013-06-03 14:53:45.012149692 -0600
+@@ -103,10 +103,10 @@
+ 		    (*wt-data-column* 80)
+ 		    (s (with-output-to-string (stream)
+ 			 (wt-filtered-data string stream))))
+-	       (format stream "static const struct ecl_base_string ~A[] = {
++	       (format stream "static const struct ecl_base_string ~A[] = { {
+ 	(int8_t)t_base_string, 0, ecl_aet_bc, 0,
+ 	ECL_NIL, (cl_index)~D, (cl_index)~D,
+-	(ecl_base_char*)~A };~%"
++	(ecl_base_char*)~A } };~%"
+ 		       name *wt-string-size* *wt-string-size* s)
+ 	       name))
+ 	   (output-c-strings (strings stream)
+--- ./src/c/ffi/libraries.d.orig	2013-05-27 14:37:36.000000000 -0600
++++ ./src/c/ffi/libraries.d	2013-06-03 13:55:36.391751747 -0600
+@@ -285,7 +285,6 @@ cl_object
+ ecl_library_open(cl_object filename, bool force_reload) {
+ 	cl_object block;
+ 	bool self_destruct = 0;
+-	char *filename_string;
+ 
+ 	/* Coerces to a file name but does not merge with cwd */
+ 	filename = coerce_to_physical_pathname(filename);
+--- ./src/c/numbers/ceiling.d.orig	2013-05-27 14:37:36.000000000 -0600
++++ ./src/c/numbers/ceiling.d	2013-06-03 13:54:43.263809367 -0600
+@@ -141,7 +141,7 @@ ecl_ceiling2(cl_object x, cl_object y)
+ 		}
+ #endif
+ 		default:
+-		  (void)0; /*Never reached */
++		  __builtin_unreachable(); /*Never reached */
+ 		}
+ 		break;
+ 	case t_bignum:
+@@ -187,7 +187,7 @@ ecl_ceiling2(cl_object x, cl_object y)
+ 		}
+ #endif
+ 		default:
+-		  (void)0; /*Never reached */
++		  __builtin_unreachable(); /*Never reached */
+ 		}
+ 		break;
+ 	case t_ratio:
+--- ./src/c/numbers/expt.d.orig	2013-05-27 14:37:36.000000000 -0600
++++ ./src/c/numbers/expt.d	2013-06-03 13:56:43.446678841 -0600
+@@ -81,7 +81,7 @@ expt_zero(cl_object x, cl_object y)
+                 return ecl_make_complex(z, ecl_make_fixnum(0));
+         default:
+                 /* We will never reach this */
+-                (void)0;
++                __builtin_unreachable();
+         }
+ }
+ 
+--- ./src/c/printer/float_to_digits.d.orig	2013-05-27 14:37:36.000000000 -0600
++++ ./src/c/printer/float_to_digits.d	2013-06-03 13:52:33.311951845 -0600
+@@ -177,7 +177,6 @@ change_precision(float_approx *approx, c
+                 {
+                         cl_object e1 = cl_expt(PRINT_BASE, position);
+                         cl_object e2 = ecl_divide(e1, ecl_make_fixnum(2));
+-                        cl_object e3 = cl_expt(PRINT_BASE, k); 
+                         if (ecl_greatereq(ecl_plus(approx->r, ecl_times(approx->s, e1)),
+                                           ecl_times(approx->s, e2)))
+                                 position = ecl_one_minus(position);
+--- ./src/h/ecl-inl.h.orig	2013-05-27 14:37:36.000000000 -0600
++++ ./src/h/ecl-inl.h	2013-06-27 10:30:15.113848605 -0600
+@@ -73,11 +73,11 @@
+                 cl_fixnum padding[(sizeof(struct ecl_base_string)+3)/4*4]; \
+         } name[]
+ 
+-#define ecl_def_string_array_elt(chars) {                      \
++#define ecl_def_string_array_elt(chars) { {                      \
+                 (int8_t)t_base_string, 0, ecl_aet_bc, 0,            \
+                         ECL_NIL, (cl_index)(sizeof(chars))-1,      \
+                         (cl_index)(sizeof(chars))-1,            \
+-                        (ecl_base_char*)(chars) }
++                        (ecl_base_char*)(chars) } }
+ 
+ #define ecl_def_ct_base_string(name,chars,len,static,const)     \
+         static const struct ecl_base_string name ## _data = {    \
+@@ -120,7 +120,7 @@
+         static const struct ecl_vector name ## _data = {                 \
+                 (int8_t)t_vector, 0, (type), 0,                         \
+                 ECL_NIL, (cl_index)(len), (cl_index)(len),                 \
+-                ecl_cast_ptr(cl_object*,raw), 0 };                      \
++                { ecl_cast_ptr(cl_object*,raw) }, 0 };                  \
+         static const cl_object name = (cl_object)(& name ## _data)
+ 
+ #ifdef ECL_SSE2
+--- ./src/h/stacks.h.orig	2013-05-27 14:37:36.000000000 -0600
++++ ./src/h/stacks.h	2013-06-27 10:40:25.930183977 -0600
+@@ -387,7 +387,7 @@
+ 	} else {
+ 
+ #define ECL_UNWIND_PROTECT_EXIT \
+-	__unwinding=0; } \
++	__unwinding=0; __next_fr=NULL; } \
+ 	ecl_frs_pop(__the_env); \
+ 	__nr = ecl_stack_push_values(__the_env);
+ 

@@ -1,0 +1,28 @@
+--- ./src/c/main.d.orig	2013-05-27 14:37:36.000000000 -0600
++++ ./src/c/main.d	2013-06-03 14:12:27.438652176 -0600
+@@ -76,7 +76,11 @@ cl_fixnum ecl_option_values[ECL_OPT_LIMI
+ 	1,		/* ECL_OPT_TRAP_SIGPIPE */
+ 	1,		/* ECL_OPT_TRAP_SIGCHLD */
+ 	1,		/* ECL_OPT_TRAP_INTERRUPT_SIGNAL */
++#ifdef GBC_BOEHM_GENGC
++ 	0,		/* ECL_OPT_SIGNAL_HANDLING_THREAD */
++#else
+	1,		/* ECL_OPT_SIGNAL_HANDLING_THREAD */
++#endif
+ 	16,		/* ECL_OPT_SIGNAL_QUEUE_SIZE */
+ 	0,		/* ECL_OPT_BOOTED */
+ 	8192,		/* ECL_OPT_BIND_STACK_SIZE */
+@@ -502,11 +506,11 @@ cl_boot(int argc, char **argv)
+ 		return 1;
+ 	}
+ 
+-	/*ecl_set_option(ECL_OPT_SIGNAL_HANDLING_THREAD, 0);*/
+-
+ #if !defined(GBC_BOEHM)
+ 	setbuf(stdin,  stdin_buf);
+ 	setbuf(stdout, stdout_buf);
++#else
++	ecl_set_option(ECL_OPT_SIGNAL_HANDLING_THREAD, 0);
+ #endif
+ 
+ 	ARGC = argc;
