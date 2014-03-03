@@ -77,14 +77,20 @@ find src/c -type f -perm /0111 | xargs chmod a-x
 find src/h -type f -perm /0111 | xargs chmod a-x
 
 %build
+export PATH=$PWD/bin:$PATH
 CONFIGURE_TOP=$PWD \
-%configure2_5x --enable-unicode=yes --enable-c99complex --enable-threads=yes \
-  --with-__thread --with-clx --disable-rpath \
+%configure2_5x --enable-unicode=yes --enable-c99complex \
+%ifarch x86_64
+  --enable-threads=yes \
+  --with-__thread \
+%endif
+  --with-clx --disable-rpath \
 %ifarch x86_64
   --with-sse \
 %endif
   CPPFLAGS=`pkg-config --cflags libffi` \
-  CFLAGS="%{optflags} -std=gnu99 -Wno-unused -Wno-return-type"
+  CFLAGS="%{optflags}  -fuse-ld=bfd -std=gnu99 -Wno-unused -Wno-return-type" \
+  LD=%{_bindir}/ld.bfd
 make
 mkdir -p ecl-doc/tmp
 make -C ecl-doc
