@@ -2,7 +2,7 @@
 
 Name:           ecl
 Version:        13.5.1
-Release:        2
+Release:        3
 Summary:        Embeddable Common-Lisp
 Group:          Development/Other
 License:        LGPLv2+ and BSD and MIT and Public Domain
