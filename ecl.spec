@@ -1,18 +1,18 @@
 %define Werror_cflags	%{nil}
 
 Name:           ecl
-Version:        13.5.1
-Release:        3
+Version:        16.1.3
+Release:        1
 Summary:        Embeddable Common-Lisp
 Group:          Development/Other
 License:        LGPLv2+ and BSD and MIT and Public Domain
-URL:            http://ecls.sourceforge.net/
-Source0:        http://downloads.sourceforge.net/ecls/%{name}-%{version}.tgz
+URL:            https://common-lisp.net/project/ecl/
+Source0:        https://common-lisp.net/project/%{name}/static/files/release/%{name}-%{version}.tgz
 # The manual has not yet been released.  Use the following commands to generate
 # the manual tarball:
-#   git clone git://ecls.git.sourceforge.net/gitroot/ecls/ecl-doc
+#   git clone https://gitlab.com/embeddable-common-lisp/ecl-doc.git
 #   cd ecl-doc
-#   git checkout 5d2657b5b32a2b5df701ba1ffa768e3e05816b70
+#   git checkout a0bab55012b31416dfc8b36da75745a2a7a71621
 #   rm -fr .git
 #   cd ..
 #   tar cJf ecl-doc.tar.xz ecl-doc
@@ -48,7 +48,7 @@ BuildRequires:  pkgconfig(bdw-gc)
 BuildRequires:  pkgconfig(x11)
 BuildRequires:  xmlto
 
-# ECL permits to mix C code and Lisp, so users probably want gcc and 
+# ECL permits to mix C code and Lisp, so users probably want gcc and
 # devel packages of libraries used by ecl
 Suggests:       gcc
 Suggests:       pkgconfig(bdw-gc)
@@ -60,8 +60,24 @@ language as described in the X3J13 Ansi specification, featuring CLOS
 (Common-Lisp Object System), conditions, loops, etc, plus a translator
 to C, which can produce standalone executables.
 
+%files
+%{_bindir}/ecl
+%{_bindir}/ecl-config
+%{_datadir}/applications/ecl.desktop
+%{_datadir}/icons/hicolor/scalable/apps/ecl.svg
+%{_libdir}/ecl*
+%{_libdir}/libecl.so.13.5*
+%{_libdir}/libecl.so.13
+%{_libdir}/libecl.so
+%{_includedir}/ecl
+%{_mandir}/man1/*
+%doc ANNOUNCEMENT Copyright LGPL examples src/CHANGELOG
+%doc ecl-doc/html src/doc/amop.txt src/doc/types-and-classes
+
 # no -devel package for header files is split off
 # since they are required by the main package
+
+#--------------------------------------------------------------------
 
 %prep
 %setup -q
@@ -79,7 +95,9 @@ find src/h -type f -perm /0111 | xargs chmod a-x
 %build
 export PATH=$PWD/bin:$PATH
 CONFIGURE_TOP=$PWD \
-%configure2_5x --enable-unicode=yes --enable-c99complex \
+%configure \
+	     --enable-unicode=yes \
+	     --enable-c99complex \
 %ifarch x86_64
   --enable-threads=yes \
   --with-__thread \
@@ -91,13 +109,13 @@ CONFIGURE_TOP=$PWD \
   CPPFLAGS=`pkg-config --cflags libffi` \
   CFLAGS="%{optflags}  -fuse-ld=bfd -std=gnu99 -Wno-unused -Wno-return-type" \
   LD=%{_bindir}/ld.bfd
-make
+%make_build
 mkdir -p ecl-doc/tmp
-make -C ecl-doc
+%make_build -C ecl-doc
 rm ecl-doc/html/ecl2.proc
 
 %install
-make DESTDIR=$RPM_BUILD_ROOT install
+%make_install DESTDIR=$RPM_BUILD_ROOT
 
 # Remove installed files that are in the wrong place
 rm -fr $RPM_BUILD_ROOT%{_docdir}
@@ -120,17 +138,3 @@ desktop-file-install --dir=$RPM_BUILD_ROOT%{_datadir}/applications %{SOURCE2}
 # Install the desktop icon
 mkdir -p $RPM_BUILD_ROOT%{_datadir}/icons/hicolor/scalable/apps
 cp -p %{SOURCE3} $RPM_BUILD_ROOT%{_datadir}/icons/hicolor/scalable/apps
-
-%files
-%{_bindir}/ecl
-%{_bindir}/ecl-config
-%{_datadir}/applications/ecl.desktop
-%{_datadir}/icons/hicolor/scalable/apps/ecl.svg
-%{_libdir}/ecl*
-%{_libdir}/libecl.so.13.5*
-%{_libdir}/libecl.so.13
-%{_libdir}/libecl.so
-%{_includedir}/ecl
-%{_mandir}/man1/*
-%doc ANNOUNCEMENT Copyright LGPL examples src/CHANGELOG
-%doc ecl-doc/html src/doc/amop.txt src/doc/types-and-classes
