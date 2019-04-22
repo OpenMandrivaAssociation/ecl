@@ -1,7 +1,9 @@
-%define Werror_cflags	%{nil}
+%global vermajor 16
+%global verminor 1
+%global verpatch 3
 
 Name:           ecl
-Version:        16.1.3
+Version:        %{vermajor}.%{verminor}.%{verpatch}
 Release:        1
 Summary:        Embeddable Common-Lisp
 Group:          Development/Other
@@ -46,20 +48,19 @@ Patch5:         %{name}-16.1.3-atan.patch
 # Upstream patch to work around https://trac.sagemath.org/ticket/23011
 Patch6:         %{name}-16.1.3-format-directive-limit.patch
 
-BuildRequires:  m4
-BuildRequires:  texi2html
-BuildRequires:	texinfo
-#BuildRequires:	texlive
+BuildRequires:  emacs-common
 BuildRequires:  gmp-devel
 BuildRequires:  pkgconfig(bdw-gc)
+BuildRequires:  pkgconfig(libffi)
 BuildRequires:  pkgconfig(x11)
 BuildRequires:  xmlto
 
-# ECL permits to mix C code and Lisp, so users probably want gcc and
+# ECL permits to mix C code and Lisp, so users probably want clang and
 # devel packages of libraries used by ecl
-Suggests:       gcc
+Suggests:       clang
 Suggests:       pkgconfig(bdw-gc)
 Suggests:       gmp-devel
+Suggests:       libffi-devel
 
 %description
 ECL (Embeddable Common-Lisp) is an interpreter of the Common-Lisp
@@ -73,12 +74,12 @@ to C, which can produce standalone executables.
 %{_datadir}/applications/ecl.desktop
 %{_datadir}/icons/hicolor/scalable/apps/ecl.svg
 %{_libdir}/ecl*
-%{_libdir}/libecl.so.13.5*
-%{_libdir}/libecl.so.13
+%{_libdir}/libecl.so.%{vermajor}.%{verminor}*
+%{_libdir}/libecl.so.%{vermajor}
 %{_libdir}/libecl.so
 %{_includedir}/ecl
 %{_mandir}/man1/*
-%doc ANNOUNCEMENT Copyright LGPL examples src/CHANGELOG
+%doc COPYING LICENSE examples CHANGELOG
 %doc ecl-doc/html src/doc/amop.txt src/doc/types-and-classes
 
 # no -devel package for header files is split off
@@ -91,60 +92,61 @@ to C, which can produce standalone executables.
 %setup -q -T -D -a 1
 %patch0
 %patch1
-%patch2
+#% patch2
 %patch3
 %patch4
 %patch5
 %patch6
 
 # Remove spurious executable bits
-chmod a-x src/CHANGELOG
 find src/c -type f -perm /0111 | xargs chmod a-x
 find src/h -type f -perm /0111 | xargs chmod a-x
 
+# Temporary fix for missing braces in initializers, causes build failure
+sed -i 's/{.*,.*,.*,.*,.*}/{&}/g' src/c/symbols_list.h
+sed -i 's/{.*,.*,.*,.*}/{&}/g' src/c/unicode/ucd_names_pair.c
+
 %build
-export PATH=$PWD/bin:$PATH
-CONFIGURE_TOP=$PWD \
 %configure \
-	     --enable-unicode=yes \
-	     --enable-c99complex \
-%ifarch x86_64
-  --enable-threads=yes \
-  --with-__thread \
-%endif
-  --with-clx --disable-rpath \
-%ifarch x86_64
-  --with-sse \
-%endif
-  CPPFLAGS=`pkg-config --cflags libffi` \
-  CFLAGS="%{optflags}  -fuse-ld=bfd -std=gnu99 -Wno-unused -Wno-return-type" \
-  LD=%{_bindir}/ld.bfd
+	--enable-unicode=yes \
+	--enable-c99complex \
+ 	--enable-threads=yes \
+	--with-__thread \
+	--with-clx \
+	--disable-rpath \
+	--with-sse=auto \
+	CPPFLAGS=`pkg-config --cflags libffi` \
+	CFLAGS="%{optflags} -fuse-ld=bfd -std=gnu99 -Wno-unused -Wno-return-type" \
+	LD=%{_bindir}/ld.bfd
 %make_build
+
+# docs
 mkdir -p ecl-doc/tmp
 %make_build -C ecl-doc
 rm ecl-doc/html/ecl2.proc
 
 %install
-%make_install DESTDIR=$RPM_BUILD_ROOT
+%make_install DESTDIR=%{buildroot}
 
 # Remove installed files that are in the wrong place
-rm -fr $RPM_BUILD_ROOT%{_docdir}
-rm -f $RPM_BUILD_ROOT%{_libdir}/Copyright
-rm -f $RPM_BUILD_ROOT%{_libdir}/LGPL
+rm -fr %{buildroot}%{_docdir}
+rm -f %{buildroot}%{_libdir}/Copyright
+rm -f %{buildroot}%{_libdir}/LGPL
 
 # Install the man pages
-mkdir -p $RPM_BUILD_ROOT%{_mandir}/man1
+mkdir -p %{buildroot}%{_mandir}/man1
 sed -e "s|@bindir@|%{_bindir}|" src/doc/ecl.man.in > \
-  $RPM_BUILD_ROOT%{_mandir}/man1/ecl.1
-cp -p src/doc/ecl-config.man.in $RPM_BUILD_ROOT%{_mandir}/man1/ecl-config.1
+  %{buildroot}%{_mandir}/man1/ecl.1
+cp -p src/doc/ecl-config.man.in %{buildroot}%{_mandir}/man1/ecl-config.1
 
 # Add missing executable bits
-chmod a+x $RPM_BUILD_ROOT%{_libdir}/ecl-%{version}/dpp
-chmod a+x $RPM_BUILD_ROOT%{_libdir}/ecl-%{version}/ecl_min
+chmod a+x %{buildroot}%{_libdir}/ecl-%{version}/dpp
+chmod a+x %{buildroot}%{_libdir}/ecl-%{version}/ecl_min
 
 # Install the desktop file
-desktop-file-install --dir=$RPM_BUILD_ROOT%{_datadir}/applications %{SOURCE2}
+desktop-file-install --dir=%{buildroot}%{_datadir}/applications %{SOURCE2}
 
 # Install the desktop icon
-mkdir -p $RPM_BUILD_ROOT%{_datadir}/icons/hicolor/scalable/apps
-cp -p %{SOURCE3} $RPM_BUILD_ROOT%{_datadir}/icons/hicolor/scalable/apps
+mkdir -p %{buildroot}%{_datadir}/icons/hicolor/scalable/apps
+cp -p %{SOURCE3} %{buildroot}%{_datadir}/icons/hicolor/scalable/apps
+
