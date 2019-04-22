@@ -36,7 +36,7 @@ Patch1:         %{name}-16.1.3-signal_handling_thread.patch
 # Work around xsltproc requiring namespace declarations for entities.  This
 # patch was sent upstream 3 Jun 2013.
 # GCC does not implement support for #pragma STDC FENV_ACCESS
-#Patch2:         %{name}-16.1.3-fenv-access.patch
+Patch2:         %{name}-16.1.3-fenv-access.patch
 # fix when building with -Werror=format-security, upstreamable
 Patch3:         %{name}-16.1.3-end_of_line.patch
 # Upstream patch to fix the SSE printer
@@ -93,6 +93,9 @@ to C, which can produce standalone executables.
 %patch1
 %patch2
 %patch3
+%patch4
+%patch5
+%patch6
 
 # Remove spurious executable bits
 chmod a-x src/CHANGELOG
