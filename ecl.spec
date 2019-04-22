@@ -25,19 +25,26 @@ Source4:        %{name}.rpmlintrc
 # This patch was sent upstream on 4 Feb 2012.  It fixes a few warnings
 # from the C compiler that indicate situations that might be dangerous at
 # runtime.
-Patch0:         %{name}-13.5.1-warnings.patch
+Patch0:         %{name}-16.1.3-warnings.patch
 # Do not use a separate thread to handle signals by default if built with
 # boehm-gc support.
 # This prevents a deadlock when building maxima with ecl support in
 # fedora, and should handle by default these problems:
 # http://trac.sagemath.org/sage_trac/ticket/11752
 # http://www.mail-archive.com/ecls-list@lists.sourceforge.net/msg00644.html
-Patch1:         %{name}-13.5.1-signal_handling_thread.patch
+Patch1:         %{name}-16.1.3-signal_handling_thread.patch
 # Work around xsltproc requiring namespace declarations for entities.  This
 # patch was sent upstream 3 Jun 2013.
-Patch2:         %{name}-12.12.1-xsltproc.patch
 # GCC does not implement support for #pragma STDC FENV_ACCESS
-Patch3:         %{name}-13.5.1-fenv-access.patch
+#Patch2:         %{name}-16.1.3-fenv-access.patch
+# fix when building with -Werror=format-security, upstreamable
+Patch3:         %{name}-16.1.3-end_of_line.patch
+# Upstream patch to fix the SSE printer
+Patch4:         %{name}-16.1.3-sse-printer.patch
+# Upstream patch to fix maxima test failure with atan with signed zero
+Patch5:         %{name}-16.1.3-atan.patch
+# Upstream patch to work around https://trac.sagemath.org/ticket/23011
+Patch6:         %{name}-16.1.3-format-directive-limit.patch
 
 BuildRequires:  m4
 BuildRequires:  texi2html
