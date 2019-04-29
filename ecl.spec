@@ -55,7 +55,9 @@ BuildRequires:	texi2html
 BuildRequires:	texinfo
 #BuildRequires:	texlive
 BuildRequires:	gmp-devel
+BuildRequires:	pkgconfig(atomic_ops)
 BuildRequires:	pkgconfig(bdw-gc)
+BuildRequires:	pkgconfig(libffi)
 BuildRequires:	pkgconfig(x11)
 BuildRequires:	xmlto
 
