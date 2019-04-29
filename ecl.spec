@@ -1,66 +1,69 @@
+#% define Werror_cflags	%{nil}
+
 %global vermajor 16
 %global verminor 1
 %global verpatch 3
 
-Name:           ecl
-Version:        %{vermajor}.%{verminor}.%{verpatch}
-Release:        1
-Summary:        Embeddable Common-Lisp
-Group:          Development/Other
-License:        LGPLv2+ and BSD and MIT and Public Domain
-URL:            https://common-lisp.net/project/ecl/
-Source0:        https://common-lisp.net/project/%{name}/static/files/release/%{name}-%{version}.tgz
-# The manual has not yet been released.  Use the following commands to generate
+Name:		ecl
+Version:	%{vermajor}.%{verminor}.%{verpatch}
+Release:	1
+Summary:	Embeddable Common-Lisp
+Group:		Development/Other
+License:	LGPLv2+ and BSD and MIT and Public Domain
+URL:		https://common-lisp.net/project/ecl/
+Source0:	https://common-lisp.net/project/%{name}/static/files/release/%{name}-%{version}.tgz
+# The manual has not yet been released. Use the following commands to generate
 # the manual tarball:
-#   git clone https://gitlab.com/embeddable-common-lisp/ecl-doc.git
-#   cd ecl-doc
-#   git checkout a0bab55012b31416dfc8b36da75745a2a7a71621
-#   rm -fr .git
-#   cd ..
-#   tar cJf ecl-doc.tar.xz ecl-doc
-Source1:        %{name}-doc.tar.xz
-Source2:        %{name}.desktop
-# A modified version of src/util/ecl.svg with extra whitespace removed.  The
+#	git clone https://gitlab.com/embeddable-common-lisp/ecl-doc.git
+#	cd ecl-doc
+#	git checkout a0bab55012b31416dfc8b36da75745a2a7a71621
+#	rm -fr .git
+#	cd ..
+#	tar cJf ecl-doc.tar.xz ecl-doc
+Source1:	%{name}-doc.tar.xz
+Source2:	%{name}.desktop
+# A modified version of src/util/ecl.svg with extra whitespace removed. The
 # extra whitespace made the icon appear very small and shoved into a corner.
-Source3:        %{name}.svg
-Source4:        %{name}.rpmlintrc
-# This patch was sent upstream on 4 Feb 2012.  It fixes a few warnings
+Source3:	%{name}.svg
+Source4:	%{name}.rpmlintrc
+# This patch was sent upstream on 4 Feb 2012. It fixes a few warnings
 # from the C compiler that indicate situations that might be dangerous at
 # runtime.
-Patch0:         %{name}-16.1.3-warnings.patch
+Patch0:		%{name}-16.1.3-warnings.patch
 # Do not use a separate thread to handle signals by default if built with
 # boehm-gc support.
 # This prevents a deadlock when building maxima with ecl support in
 # fedora, and should handle by default these problems:
 # http://trac.sagemath.org/sage_trac/ticket/11752
 # http://www.mail-archive.com/ecls-list@lists.sourceforge.net/msg00644.html
-Patch1:         %{name}-16.1.3-signal_handling_thread.patch
-# Work around xsltproc requiring namespace declarations for entities.  This
+Patch1:		%{name}-16.1.3-signal_handling_thread.patch
+# Work around xsltproc requiring namespace declarations for entities. This
 # patch was sent upstream 3 Jun 2013.
 # GCC does not implement support for #pragma STDC FENV_ACCESS
-Patch2:         %{name}-16.1.3-fenv-access.patch
+Patch2:		%{name}-16.1.3-fenv-access.patch
 # fix when building with -Werror=format-security, upstreamable
-Patch3:         %{name}-16.1.3-end_of_line.patch
+Patch3:		%{name}-16.1.3-end_of_line.patch
 # Upstream patch to fix the SSE printer
-Patch4:         %{name}-16.1.3-sse-printer.patch
+Patch4:		%{name}-16.1.3-sse-printer.patch
 # Upstream patch to fix maxima test failure with atan with signed zero
-Patch5:         %{name}-16.1.3-atan.patch
+Patch5:		%{name}-16.1.3-atan.patch
 # Upstream patch to work around https://trac.sagemath.org/ticket/23011
-Patch6:         %{name}-16.1.3-format-directive-limit.patch
+Patch6:		%{name}-16.1.3-format-directive-limit.patch
 
-BuildRequires:  emacs-common
-BuildRequires:  gmp-devel
-BuildRequires:  pkgconfig(bdw-gc)
-BuildRequires:  pkgconfig(libffi)
-BuildRequires:  pkgconfig(x11)
-BuildRequires:  xmlto
+BuildRequires:	m4
+BuildRequires:	texi2html
+BuildRequires:	texinfo
+#BuildRequires:	texlive
+BuildRequires:	gmp-devel
+BuildRequires:	pkgconfig(bdw-gc)
+BuildRequires:	pkgconfig(x11)
+BuildRequires:	xmlto
 
 # ECL permits to mix C code and Lisp, so users probably want clang and
 # devel packages of libraries used by ecl
-Suggests:       clang
-Suggests:       pkgconfig(bdw-gc)
-Suggests:       gmp-devel
-Suggests:       libffi-devel
+Suggests:	clang
+Suggests:	pkgconfig(bdw-gc)
+Suggests:	gmp-devel
 
 %description
 ECL (Embeddable Common-Lisp) is an interpreter of the Common-Lisp
@@ -136,7 +139,7 @@ rm -f %{buildroot}%{_libdir}/LGPL
 # Install the man pages
 mkdir -p %{buildroot}%{_mandir}/man1
 sed -e "s|@bindir@|%{_bindir}|" src/doc/ecl.man.in > \
-  %{buildroot}%{_mandir}/man1/ecl.1
+	%{buildroot}%{_mandir}/man1/ecl.1
 cp -p src/doc/ecl-config.man.in %{buildroot}%{_mandir}/man1/ecl-config.1
 
 # Add missing executable bits
