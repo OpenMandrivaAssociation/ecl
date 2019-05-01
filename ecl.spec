@@ -112,6 +112,9 @@ sed -i 's/{.*,.*,.*,.*,.*}/{&}/g' src/c/symbols_list.h
 sed -i 's/{.*,.*,.*,.*}/{&}/g' src/c/unicode/ucd_names_pair.c
 
 %build
+CPPFLAGS=`pkg-config --cflags libffi` \
+	CFLAGS="%{optflags}  -fuse-ld=bfd -std=gnu99 -Wno-unused -Wno-return-type" \
+	LD=%{_bindir}/ld.bfd
 %configure \
 	--enable-unicode=yes \
 	--enable-c99complex \
@@ -123,15 +126,15 @@ sed -i 's/{.*,.*,.*,.*}/{&}/g' src/c/unicode/ucd_names_pair.c
 	CPPFLAGS=`pkg-config --cflags libffi` \
 	CFLAGS="%{optflags} -fuse-ld=bfd -std=gnu99 -Wno-unused -Wno-return-type" \
 	LD=%{_bindir}/ld.bfd
-%make_build
+make
 
 # docs
 mkdir -p ecl-doc/tmp
-%make_build -C ecl-doc
+make -C ecl-doc
 rm ecl-doc/html/ecl2.proc
 
 %install
-%make_install DESTDIR=%{buildroot}
+make DESTDIR=%{buildroot} install
 
 # Remove installed files that are in the wrong place
 rm -fr %{buildroot}%{_docdir}
