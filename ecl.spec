@@ -1,11 +1,11 @@
 #% define Werror_cflags	%{nil}
 
-%global vermajor 16
-%global verminor 1
-%global verpatch 3
+%global vermajor %(echo %{version} |cut -d. -f1)
+%global verminor %(echo %{version} |cut -d. -f2)
+%global verpatch %(echo %{version} |cut -d. -f3)
 
 Name:		ecl
-Version:	%{vermajor}.%{verminor}.%{verpatch}
+Version:	21.2.1
 Release:	1
 Summary:	Embeddable Common-Lisp
 Group:		Development/Other
@@ -29,26 +29,18 @@ Source4:	%{name}.rpmlintrc
 # This patch was sent upstream on 4 Feb 2012. It fixes a few warnings
 # from the C compiler that indicate situations that might be dangerous at
 # runtime.
-Patch0:		%{name}-16.1.3-warnings.patch
+#Patch0:		%{name}-16.1.3-warnings.patch
 # Do not use a separate thread to handle signals by default if built with
 # boehm-gc support.
 # This prevents a deadlock when building maxima with ecl support in
 # fedora, and should handle by default these problems:
 # http://trac.sagemath.org/sage_trac/ticket/11752
 # http://www.mail-archive.com/ecls-list@lists.sourceforge.net/msg00644.html
-Patch1:		%{name}-16.1.3-signal_handling_thread.patch
+#Patch1:		%{name}-16.1.3-signal_handling_thread.patch
 # Work around xsltproc requiring namespace declarations for entities. This
 # patch was sent upstream 3 Jun 2013.
 # GCC does not implement support for #pragma STDC FENV_ACCESS
-Patch2:		%{name}-16.1.3-fenv-access.patch
-# fix when building with -Werror=format-security, upstreamable
-Patch3:		%{name}-16.1.3-end_of_line.patch
-# Upstream patch to fix the SSE printer
-Patch4:		%{name}-16.1.3-sse-printer.patch
-# Upstream patch to fix maxima test failure with atan with signed zero
-Patch5:		%{name}-16.1.3-atan.patch
-# Upstream patch to work around https://trac.sagemath.org/ticket/23011
-Patch6:		%{name}-16.1.3-format-directive-limit.patch
+#Patch2:		%{name}-16.1.3-fenv-access.patch
 
 BuildRequires:	m4
 BuildRequires:	texi2html
@@ -79,11 +71,11 @@ to C, which can produce standalone executables.
 %{_datadir}/applications/ecl.desktop
 %{_datadir}/icons/hicolor/scalable/apps/ecl.svg
 %{_libdir}/ecl*
-%{_libdir}/libecl.so.%{vermajor}.%{verminor}*
-%{_libdir}/libecl.so.%{vermajor}
+%{_libdir}/libecl.so.*
 %{_libdir}/libecl.so
 %{_includedir}/ecl
 %{_mandir}/man1/*
+%{_infodir}/*.info*
 %doc COPYING LICENSE examples CHANGELOG
 %doc ecl-doc/html src/doc/amop.txt src/doc/types-and-classes
 
@@ -95,13 +87,7 @@ to C, which can produce standalone executables.
 %prep
 %setup -q
 %setup -q -T -D -a 1
-%patch0
-%patch1
-#% patch2
-%patch3
-%patch4
-%patch5
-%patch6
+%autopatch -p0
 
 # Remove spurious executable bits
 find src/c -type f -perm /0111 | xargs chmod a-x
@@ -157,4 +143,3 @@ desktop-file-install --dir=%{buildroot}%{_datadir}/applications %{SOURCE2}
 # Install the desktop icon
 mkdir -p %{buildroot}%{_datadir}/icons/hicolor/scalable/apps
 cp -p %{SOURCE3} %{buildroot}%{_datadir}/icons/hicolor/scalable/apps
-
