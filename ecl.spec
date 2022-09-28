@@ -45,6 +45,7 @@ Source4:	%{name}.rpmlintrc
 BuildRequires:	m4
 BuildRequires:	texi2html
 BuildRequires:	texinfo
+BuildRequires:	info
 #BuildRequires:	texlive
 BuildRequires:	gmp-devel
 BuildRequires:	pkgconfig(atomic_ops)
