@@ -1,8 +1,8 @@
---- src/c/main.d.orig	2017-02-23 10:23:32.939568519 -0700
-+++ src/c/main.d	2017-02-23 10:25:31.421934110 -0700
-@@ -85,7 +85,11 @@ cl_fixnum ecl_option_values[ECL_OPT_LIMI
+--- src/c/main.d.orig	2020-04-24 04:54:52.000000000 -0600
++++ src/c/main.d	2020-07-01 13:38:14.196114293 -0600
+@@ -83,7 +83,11 @@ cl_fixnum ecl_option_values[ECL_OPT_LIMI
+   1,              /* ECL_OPT_TRAP_SIGBUS */
    1,              /* ECL_OPT_TRAP_SIGPIPE */
-   1,              /* ECL_OPT_TRAP_SIGCHLD */
    1,              /* ECL_OPT_TRAP_INTERRUPT_SIGNAL */
 +#ifdef GBC_BOEHM_GENGC
 +  0,              /* ECL_OPT_SIGNAL_HANDLING_THREAD */
@@ -12,17 +12,16 @@
    16,             /* ECL_OPT_SIGNAL_QUEUE_SIZE */
    0,              /* ECL_OPT_BOOTED */
    8192,           /* ECL_OPT_BIND_STACK_SIZE */
-@@ -497,11 +501,11 @@ cl_boot(int argc, char **argv)
+@@ -509,9 +513,9 @@ cl_boot(int argc, char **argv)
      return 1;
    }
  
 -  /*ecl_set_option(ECL_OPT_SIGNAL_HANDLING_THREAD, 0);*/
 -
- #if !defined(GBC_BOEHM)
+-#if !defined(GBC_BOEHM)
++#if defined(GBC_BOEHM)
++  ecl_set_option(ECL_OPT_SIGNAL_HANDLING_THREAD, 0);
++#else
    setbuf(stdin,  stdin_buf);
    setbuf(stdout, stdout_buf);
-+#else
-+  ecl_set_option(ECL_OPT_SIGNAL_HANDLING_THREAD, 0);
  #endif
- 
-   ARGC = argc;

@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="windows-1252"?>
+<component type="desktop-application">
+  <id>net.common-lisp.ecl</id>
+  <metadata_license>CC0-1.0</metadata_license>
+  <project_license>LGPL-2.1-or-later</project_license>
+  <name>Embeddable Common Lisp</name>
+  <summary>Common Lisp engine that can be embedded in C applications</summary>
+  <description>
+    <p>
+      ECL (Embeddable Common Lisp) is an implementation of the Common Lisp
+      language as defined by the ANSI X3J13 specification.  ECL features a
+      bytecode compiler and interpreter, the ability to build standalone
+      executables and libraries, and extensions such as ASDF, sockets, and
+      Gray streams.
+    </p>
+  </description>
+  <launchable type="desktop-id">ecl.desktop</launchable>
+  <screenshots>
+    <screenshot type="default">
+      <image>https://a.fsdn.com/con/app/proj/ecls/screenshots/22260.jpg/max/max/1</image>
+      <caption>ECL in Emacs</caption>
+    </screenshot>
+    <screenshot>
+      <image>https://a.fsdn.com/con/app/proj/ecls/screenshots/49777.jpg/max/max/1</image>
+      <caption>Simple Qt app written with ECL</caption>
+    </screenshot>
+    <screenshot>
+      <image>https://a.fsdn.com/con/app/proj/ecls/screenshots/191857.jpg/max/max/1</image>
+      <caption>ECL in a terminal</caption>
+    </screenshot>
+  </screenshots>
+  <update_contact>loganjerry@gmail.com</update_contact>
+  <url type="homepage">https://common-lisp.net/project/ecl/</url>
+  <url type="bugtracker">https://gitlab.com/embeddable-common-lisp/ecl/-/issues</url>
+  <url type="help">https://common-lisp.net/project/ecl/static/manual/</url>
+  <url type="donation">https://www.patreon.com/jackdaniel_kochmanski</url>
+  <!--
+  Uncomment once fixed: https://bugzilla.redhat.com/show_bug.cgi?id=1893337
+  <url type="contact">mailto:ecl-devel@common-lisp.net</url>
+  -->
+  <content_rating type="oars-1.0"/>
+  <provides>
+    <binary>ecl</binary>
+    <binary>ecl-config</binary>
+  </provides>
+</component>

@@ -1,0 +1,26 @@
+diff --git src/aclocal.m4 src/aclocal.m4
+index d144285..d56175e 100644
+--- src/aclocal.m4
++++ src/aclocal.m4
+@@ -977,7 +977,7 @@ void fpe_handler(int code) {
+ 		exit(0);
+ }
+ 
+-double raises_fpe(double x) {
++__attribute__ ((noipa,noclone,noinline)) double raises_fpe(double x) {
+ 	return x / 0.0;
+ }
+ 
+diff --git src/configure src/configure
+index d045ba5..e395298 100755
+--- src/configure
++++ src/configure
+@@ -9587,7 +9587,7 @@ void fpe_handler(int code) {
+ 		exit(0);
+ }
+ 
+-double raises_fpe(double x) {
++__attribute__ ((noipa,noclone,noinline)) double raises_fpe(double x) {
+ 	return x / 0.0;
+ }
+ 

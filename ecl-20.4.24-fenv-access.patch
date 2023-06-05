@@ -1,0 +1,49 @@
+--- src/c/Makefile.in.orig	2020-07-01 14:39:48.097395278 -0600
++++ src/c/Makefile.in	2020-07-06 21:07:09.618570350 -0600
+@@ -92,6 +92,46 @@ all: $(DPP) ../libeclmin.a ../cinit.o
+ # 	if test -f ../CROSS-DPP ; then ../CROSS-DPP $< $@.c ; else $(DPP) $< $@.c ; fi
+ # 	$(CC) -DECLDIR="\"@ecldir@\"" $(CFLAGS) -S -o $@ $@.c
+ 
++# GCC doesn't understand #pragma STDC FENV_ACCESS ON, so we do this instead:
++numbers/atan.o: numbers/atan.c
++	$(CC) -DECLDIR="\"@ecldir@\"" $(CFLAGS) -frounding-math -fsignaling-nans -o $@ $<
++numbers/ceiling.o: numbers/ceiling.c
++	$(CC) -DECLDIR="\"@ecldir@\"" $(CFLAGS) -frounding-math -fsignaling-nans -o $@ $<
++numbers/cos.o: numbers/cos.c
++	$(CC) -DECLDIR="\"@ecldir@\"" $(CFLAGS) -frounding-math -fsignaling-nans -o $@ $<
++numbers/cosh.o: numbers/cosh.c
++	$(CC) -DECLDIR="\"@ecldir@\"" $(CFLAGS) -frounding-math -fsignaling-nans -o $@ $<
++numbers/divide.o: numbers/divide.c
++	$(CC) -DECLDIR="\"@ecldir@\"" $(CFLAGS) -frounding-math -fsignaling-nans -o $@ $<
++numbers/exp.o: numbers/exp.c
++	$(CC) -DECLDIR="\"@ecldir@\"" $(CFLAGS) -frounding-math -fsignaling-nans -o $@ $<
++numbers/expt.o: numbers/expt.c
++	$(CC) -DECLDIR="\"@ecldir@\"" $(CFLAGS) -frounding-math -fsignaling-nans -o $@ $<
++numbers/floor.o: numbers/floor.c
++	$(CC) -DECLDIR="\"@ecldir@\"" $(CFLAGS) -frounding-math -fsignaling-nans -o $@ $<
++numbers/log.o: numbers/log.c
++	$(CC) -DECLDIR="\"@ecldir@\"" $(CFLAGS) -frounding-math -fsignaling-nans -o $@ $<
++numbers/minus.o: numbers/minus.c
++	$(CC) -DECLDIR="\"@ecldir@\"" $(CFLAGS) -frounding-math -fsignaling-nans -o $@ $<
++numbers/plus.o: numbers/plus.c
++	$(CC) -DECLDIR="\"@ecldir@\"" $(CFLAGS) -frounding-math -fsignaling-nans -o $@ $<
++numbers/round.o: numbers/round.c
++	$(CC) -DECLDIR="\"@ecldir@\"" $(CFLAGS) -frounding-math -fsignaling-nans -o $@ $<
++numbers/sin.o: numbers/sin.c
++	$(CC) -DECLDIR="\"@ecldir@\"" $(CFLAGS) -frounding-math -fsignaling-nans -o $@ $<
++numbers/sinh.o: numbers/sinh.c
++	$(CC) -DECLDIR="\"@ecldir@\"" $(CFLAGS) -frounding-math -fsignaling-nans -o $@ $<
++numbers/sqrt.o: numbers/sqrt.c
++	$(CC) -DECLDIR="\"@ecldir@\"" $(CFLAGS) -frounding-math -fsignaling-nans -o $@ $<
++numbers/tan.o: numbers/tan.c
++	$(CC) -DECLDIR="\"@ecldir@\"" $(CFLAGS) -frounding-math -fsignaling-nans -o $@ $<
++numbers/tanh.o: numbers/tanh.c
++	$(CC) -DECLDIR="\"@ecldir@\"" $(CFLAGS) -frounding-math -fsignaling-nans -o $@ $<
++numbers/times.o: numbers/times.c
++	$(CC) -DECLDIR="\"@ecldir@\"" $(CFLAGS) -frounding-math -fsignaling-nans -o $@ $<
++numbers/truncate.o: numbers/truncate.c
++	$(CC) -DECLDIR="\"@ecldir@\"" $(CFLAGS) -frounding-math -fsignaling-nans -o $@ $<
++
+ ../libeclmin.a: $(OBJS) all_symbols.o all_symbols2.o
+ 	$(RM) $@
+ 	$(AR) cr $@ $(OBJS)
