@@ -1,3 +1,5 @@
+%define _disable_lto 1
+
 # (fedora)
 # The package notes feature leads to failed builds for everything that depends
 # on ECL.  Turn it off until somebody figures out how to make it work without
@@ -76,13 +78,13 @@ to C, which can produce standalone executables.
 %doc src/doc/amop.txt src/doc/types-and-classes
 %{_bindir}/ecl
 %{_bindir}/ecl-config
-%{_datadir}/applications/ecl.desktop
-%{_datadir}/icons/hicolor/scalable/apps/ecl.svg
-%{_metainfodir}/net.common-lisp.ecl.metainfo.xml
+%{_includedir}/ecl
 %{_libdir}/ecl*
 %{_libdir}/libecl.so.*
 %{_libdir}/libecl.so
-%{_includedir}/ecl
+%{_datadir}/applications/ecl.desktop
+%{_datadir}/icons/hicolor/scalable/apps/ecl.svg
+%{_metainfodir}/net.common-lisp.ecl.metainfo.xml
 %{_mandir}/man1/*
 #{_infodir}/*.info*
 
@@ -105,21 +107,20 @@ sed -i "/ECL_LDRPATH='-Wl,--rpath,~A'/d" src/configure
 sed -i 's/mv ecl/&_html/' src/doc/manual/Makefile
  
 %build
-export CC=gcc
-export CXX=g++
 %configure \
-	--enable-unicode=yes \
-	--enable-c99complex \
- 	--enable-threads=yes \
-	--with-__thread \
-	--with-clx \
 	--disable-rpath \
-	--with-sse=auto \
+	--enable-c99complex \
 	--enable-manual=html \
-	--with-sse=auto 	
-	CPPFLAGS="%{optflags} `pkg-config --cflags libffi`" \
+	--enable-threads=yes \
+	--enable-unicode=yes \
+	--with-clx \
+	--with-sse=auto \
+	--with-__thread \
 	CFLAGS="%{optflags} -Wno-unused -Wno-return-type -Wno-unknown-pragmas"
 %make -j1
+
+%check
+%make -j1 check
 
 %install
 %make_install
@@ -129,7 +130,7 @@ rm -fr %{buildroot}%{_docdir}
 rm -f %{buildroot}%{_libdir}/Copyright
 rm -f %{buildroot}%{_libdir}/LGPL
 
-# Install the man pages
+# man pages
 mkdir -p %{buildroot}%{_mandir}/man1
 sed -e "s|@bindir@|%{_bindir}|" src/doc/ecl.man.in > \
 	%{buildroot}%{_mandir}/man1/ecl.1
@@ -139,14 +140,14 @@ cp -p src/doc/ecl-config.man.in %{buildroot}%{_mandir}/man1/ecl-config.1
 chmod a+x %{buildroot}%{_libdir}/ecl-%{version}/dpp
 chmod a+x %{buildroot}%{_libdir}/ecl-%{version}/ecl_min
 
-# Install the desktop file
+# .desktop
 desktop-file-install --dir=%{buildroot}%{_datadir}/applications %{SOURCE1}
 
-# Install the desktop icon
+# icon
 mkdir -p %{buildroot}%{_datadir}/icons/hicolor/scalable/apps
-cp -p %{SOURCE3} %{buildroot}%{_datadir}/icons/hicolor/scalable/apps
+cp -p %{SOURCE2} %{buildroot}%{_datadir}/icons/hicolor/scalable/apps
 
-# Install the AppData file
+# appdata
 mkdir -p %{buildroot}%{_metainfodir}
 install -pm 644 %{SOURCE3} %{buildroot}%{_metainfodir}
 appstreamcli validate --no-net \
