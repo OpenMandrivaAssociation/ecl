@@ -42,6 +42,7 @@ Patch3:		%{name}-20.4.24-write-error.patch
 # Fix bogus test compromised by LTO.
 Patch4:		%{name}-20.4.24-configure.patch
 
+BuildRequires:	appstream
 #BuildRequires:	docbook-schemas
 BuildRequires:	docbook-style-xsl
 BuildRequires: 	emacs-common
@@ -129,10 +130,10 @@ rm -f %{buildroot}%{_libdir}/Copyright
 rm -f %{buildroot}%{_libdir}/LGPL
 
 # man pages
-mkdir -p %{buildroot}%{_mandir}/man1
+install -Dpm 0755 mkdir -p %{buildroot}%{_mandir}/man1/
 sed -e "s|@bindir@|%{_bindir}|" src/doc/ecl.man.in > \
 	%{buildroot}%{_mandir}/man1/ecl.1
-cp -p src/doc/ecl-config.man.in %{buildroot}%{_mandir}/man1/ecl-config.1
+install -pm 0644 src/doc/ecl-config.man.in %{buildroot}%{_mandir}/man1/ecl-config.1
 
 # Add missing executable bits
 chmod a+x %{buildroot}%{_libdir}/ecl-%{version}/dpp
@@ -142,12 +143,12 @@ chmod a+x %{buildroot}%{_libdir}/ecl-%{version}/ecl_min
 desktop-file-install --dir=%{buildroot}%{_datadir}/applications %{SOURCE1}
 
 # icon
-mkdir -p %{buildroot}%{_datadir}/icons/hicolor/scalable/apps
-cp -p %{SOURCE2} %{buildroot}%{_datadir}/icons/hicolor/scalable/apps
+install -Dpm 0755 %{buildroot}%{_datadir}/icons/hicolor/scalable/apps/
+install -pm  0644 %{SOURCE2} %{buildroot}%{_datadir}/icons/hicolor/scalable/apps/
 
 # appdata
-mkdir -p %{buildroot}%{_metainfodir}
-install -pm 644 %{SOURCE3} %{buildroot}%{_metainfodir}
+install -Dpm 0755 %{buildroot}%{_metainfodir}
+install -pm  0644 %{SOURCE3} %{buildroot}%{_metainfodir}
 appstreamcli validate --no-net \
 	%{buildroot}%{_metainfodir}/net.common-lisp.ecl.metainfo.xml
 
