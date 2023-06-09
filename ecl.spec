@@ -53,7 +53,7 @@ BuildRequires:	pkgconfig(x11)
 #BuildRequires:	texi2html
 BuildRequires:	texinfo
 #BuildRequires:	texlive
-#BuildRequires:	info
+BuildRequires:	info
 BuildRequires:	xmlto
 
 # ECL permits to mix C code and Lisp, so users probably want clang and
@@ -113,9 +113,7 @@ sed -i 's/mv ecl/&_html/' src/doc/manual/Makefile
 	--enable-manual=html \
 	--enable-threads=yes \
 	--enable-unicode=yes \
-	--with-clx \
 	--with-sse=auto \
-	--with-__thread \
 	CFLAGS="%{optflags} -Wno-unused -Wno-return-type -Wno-unknown-pragmas"
 %make_build -j1
 
