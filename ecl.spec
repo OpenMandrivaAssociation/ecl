@@ -130,7 +130,7 @@ rm -f %{buildroot}%{_libdir}/Copyright
 rm -f %{buildroot}%{_libdir}/LGPL
 
 # man pages
-install -Dpm 0755 mkdir -p %{buildroot}%{_mandir}/man1/
+install -Dpm 0755 %{buildroot}%{_mandir}/man1/
 sed -e "s|@bindir@|%{_bindir}|" src/doc/ecl.man.in > \
 	%{buildroot}%{_mandir}/man1/ecl.1
 install -pm 0644 src/doc/ecl-config.man.in %{buildroot}%{_mandir}/man1/ecl-config.1
