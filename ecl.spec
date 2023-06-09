@@ -97,7 +97,7 @@ to C, which can produce standalone executables.
 %autosetup -p0
 
 # Temporary fix for missing braces in initializers, causes build failure
-sed -i 's/{.*,.*,.*,.*,.*}/{&}/g' src/c/symbols_list.h
+#sed -i 's/{.*,.*,.*,.*,.*}/{&}/g' src/c/symbols_list.h
 #sed -i 's/{.*,.*,.*,.*}/{&}/g' src/c/unicode/ucd_names_pair.c
 
 # Don't give the library a useless rpath
@@ -117,10 +117,10 @@ sed -i 's/mv ecl/&_html/' src/doc/manual/Makefile
 	--with-sse=auto \
 	--with-__thread \
 	CFLAGS="%{optflags} -Wno-unused -Wno-return-type -Wno-unknown-pragmas"
-%make -j1
+%make_build -j1
 
 %check
-%make -j1 check
+%make_build -j1 check
 
 %install
 %make_install
