@@ -130,7 +130,7 @@ rm -f %{buildroot}%{_libdir}/Copyright
 rm -f %{buildroot}%{_libdir}/LGPL
 
 # man pages
-install -Dpm 0755 %{buildroot}%{_mandir}/man1/
+install -dpm 0755 %{buildroot}%{_mandir}/man1/
 sed -e "s|@bindir@|%{_bindir}|" src/doc/ecl.man.in > \
 	%{buildroot}%{_mandir}/man1/ecl.1
 install -pm 0644 src/doc/ecl-config.man.in %{buildroot}%{_mandir}/man1/ecl-config.1
@@ -143,11 +143,11 @@ chmod a+x %{buildroot}%{_libdir}/ecl-%{version}/ecl_min
 desktop-file-install --dir=%{buildroot}%{_datadir}/applications %{SOURCE1}
 
 # icon
-install -Dpm 0755 %{buildroot}%{_datadir}/icons/hicolor/scalable/apps/
+install -dpm 0755 %{buildroot}%{_datadir}/icons/hicolor/scalable/apps/
 install -pm  0644 %{SOURCE2} %{buildroot}%{_datadir}/icons/hicolor/scalable/apps/
 
 # appdata
-install -Dpm 0755 %{buildroot}%{_metainfodir}
+install -dpm 0755 %{buildroot}%{_metainfodir}
 install -pm  0644 %{SOURCE3} %{buildroot}%{_metainfodir}
 appstreamcli validate --no-net \
 	%{buildroot}%{_metainfodir}/net.common-lisp.ecl.metainfo.xml
