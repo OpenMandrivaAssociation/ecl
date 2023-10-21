@@ -8,8 +8,8 @@
 
 Summary:	Embeddable Common-Lisp
 Name:		ecl
-Version:	21.2.1
-Release:	2
+Version:	23.9.9
+Release:	1
 Group:		Development/Other
 License:	LGPLv2+ and BSD and MIT and Public Domain
 URL:		https://common-lisp.net/project/ecl/
