@@ -20,11 +20,11 @@ Source1:	%{name}.desktop
 Source2:	%{name}.svg
 # Metainfo for ECL
 Source3:	net.common-lisp.ecl.metainfo.xml
-Source4:	%{name}.rpmlintrc
+#Source4:	%{name}.rpmlintrc
 # This patch was sent upstream on 4 Feb 2012. It fixes a few warnings
 # from the C compiler that indicate situations that might be dangerous at
 # runtime.
-Patch0:		%{name}-21.2.1-warnings.patch
+Patch0:		%{name}-23.9.9-warnings.patch
 # Do not use a separate thread to handle signals by default if built with
 # boehm-gc support.
 # This prevents a deadlock when building maxima with ecl support in
@@ -35,7 +35,7 @@ Patch1:		%{name}-20.4.24-signal_handling_thread.patch
 # Work around xsltproc requiring namespace declarations for entities. This
 # patch was sent upstream 3 Jun 2013.
 # GCC does not implement support for #pragma STDC FENV_ACCESS
-Patch2:		%{name}-20.4.24-fenv-access.patch
+Patch2:		%{name}-23.9.9-fenv-access.patch
 # Avoid an infinite loop if there is a write error on stderr.  See
 # build/pkgs/ecl/patches/write_error.patch in the sagemath distribution.
 Patch3:		%{name}-20.4.24-write-error.patch

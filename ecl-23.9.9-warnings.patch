@@ -1,6 +1,6 @@
---- src/c/compiler.d.orig	2021-02-01 05:59:46.000000000 -0700
-+++ src/c/compiler.d	2021-02-01 08:18:32.319218522 -0700
-@@ -3268,7 +3268,7 @@ si_valid_function_name_p(cl_object name)
+--- src/c/compiler.d.orig	2023-09-08 10:55:48.000000000 -0600
++++ src/c/compiler.d	2023-09-10 09:33:48.904786779 -0600
+@@ -3290,7 +3290,7 @@ si_valid_function_name_p(cl_object name)
  cl_object
  si_make_lambda(cl_object name, cl_object rest)
  {
@@ -9,8 +9,8 @@
    const cl_env_ptr the_env = ecl_process_env();
    cl_compiler_env_ptr old_c_env = the_env->c_env;
    struct cl_compiler_env new_c_env;
---- src/c/ffi.d.orig	2021-02-01 05:59:46.000000000 -0700
-+++ src/c/ffi.d	2021-02-01 08:18:32.321218518 -0700
+--- src/c/ffi.d.orig	2023-09-08 10:55:48.000000000 -0600
++++ src/c/ffi.d	2023-09-10 09:33:48.905786762 -0600
 @@ -766,7 +766,7 @@ si_load_foreign_module(cl_object filenam
  #if !defined(ENABLE_DLOPEN)
    FEerror("SI:LOAD-FOREIGN-MODULE does not work when ECL is statically linked", 0);
@@ -20,9 +20,9 @@
  
  # ifdef ECL_THREADS
    mp_get_lock_wait(ecl_symbol_value(@'mp::+load-compile-lock+'));
---- src/cmp/cmpcatch.lsp.orig	2021-02-01 05:59:46.000000000 -0700
-+++ src/cmp/cmpcatch.lsp	2021-02-01 08:18:32.322218515 -0700
-@@ -86,6 +86,7 @@
+--- src/cmp/cmpbackend-cxx/cmppass2-cont.lsp.orig	2023-09-08 10:55:48.000000000 -0600
++++ src/cmp/cmpbackend-cxx/cmppass2-cont.lsp	2023-09-10 09:37:32.683830668 -0600
+@@ -194,6 +194,7 @@
      (let ((*unwind-exit* (cons 'FRAME *unwind-exit*))
            (*destination* 'VALUES))
        (c2expr* form))
@@ -30,9 +30,9 @@
      (wt-nl "}")
      (wt-nl "ecl_frs_pop(cl_env_copy);")
      ;; Here we save the values of the form which might have been
---- src/cmp/cmpwt.lsp.orig	2021-02-01 05:59:46.000000000 -0700
-+++ src/cmp/cmpwt.lsp	2021-02-01 08:18:32.322218515 -0700
-@@ -106,10 +106,10 @@
+--- src/cmp/cmpbackend-cxx/cmppass2-data.lsp.orig	2023-09-08 10:55:48.000000000 -0600
++++ src/cmp/cmpbackend-cxx/cmppass2-data.lsp	2023-09-10 09:39:13.411049947 -0600
+@@ -58,10 +58,10 @@
                      (*wt-data-column* 80)
                      (s (with-output-to-string (stream)
                           (wt-filtered-data string stream))))
@@ -45,8 +45,8 @@
                         name *wt-string-size* *wt-string-size* s)
                 name))
             (output-c-strings (strings stream)
---- src/c/number.d.orig	2021-02-01 05:59:46.000000000 -0700
-+++ src/c/number.d	2021-02-01 08:18:32.323218513 -0700
+--- src/c/number.d.orig	2023-09-08 10:55:48.000000000 -0600
++++ src/c/number.d	2023-09-10 09:34:34.149986905 -0600
 @@ -630,6 +630,7 @@ si_complex_float(cl_object r, cl_object
      break;
    default:
@@ -55,8 +55,8 @@
    }
    return result;
  }
---- src/c/numbers/ceiling.d.orig	2021-02-01 05:59:46.000000000 -0700
-+++ src/c/numbers/ceiling.d	2021-02-01 08:18:32.324218511 -0700
+--- src/c/numbers/ceiling.d.orig	2023-09-08 10:55:48.000000000 -0600
++++ src/c/numbers/ceiling.d	2023-09-10 09:34:34.150986887 -0600
 @@ -143,7 +143,7 @@ ecl_ceiling2(cl_object x, cl_object y)
        break;
      }
@@ -75,8 +75,8 @@
      }
      break;
    case t_ratio:
---- src/c/num_log.d.orig	2021-02-01 05:59:46.000000000 -0700
-+++ src/c/num_log.d	2021-02-01 08:18:32.324218511 -0700
+--- src/c/num_log.d.orig	2023-09-08 10:55:48.000000000 -0600
++++ src/c/num_log.d	2023-09-10 09:34:34.150986887 -0600
 @@ -476,7 +476,7 @@ cl_object
  si_bit_array_op(cl_object o, cl_object x, cl_object y, cl_object r)
  {
@@ -86,8 +86,8 @@
    bit_operator op;
    bool replace = FALSE;
    int xi, yi, ri;
---- src/c/num_rand.d.orig	2021-02-01 05:59:46.000000000 -0700
-+++ src/c/num_rand.d	2021-02-01 08:18:32.325218508 -0700
+--- src/c/num_rand.d.orig	2023-09-08 10:55:48.000000000 -0600
++++ src/c/num_rand.d	2023-09-10 09:34:34.150986887 -0600
 @@ -211,7 +211,8 @@ init_random_state(void)
     * a lot of entropy, so use open() */
    int file_handler = open("/dev/urandom", O_RDONLY);
@@ -98,8 +98,8 @@
      close(file_handler);
    } else
  #endif
---- src/c/printer/write_ugly.d.orig	2021-02-01 05:59:46.000000000 -0700
-+++ src/c/printer/write_ugly.d	2021-02-01 08:18:32.326218506 -0700
+--- src/c/printer/write_ugly.d.orig	2023-09-08 10:55:48.000000000 -0600
++++ src/c/printer/write_ugly.d	2023-09-10 09:34:34.150986887 -0600
 @@ -135,6 +135,8 @@ write_complex_float(cl_object f, cl_obje
      imag = ecl_make_long_float(cimagl(ecl_clfloat(f)));
      break;
@@ -109,8 +109,8 @@
      break;
    }
    writestr_stream("#C(", stream);
---- src/h/ecl-inl.h.orig	2021-02-01 05:59:46.000000000 -0700
-+++ src/h/ecl-inl.h	2021-02-01 08:18:32.328218501 -0700
+--- src/h/ecl-inl.h.orig	2023-09-08 10:55:48.000000000 -0600
++++ src/h/ecl-inl.h	2023-09-10 09:34:34.151986870 -0600
 @@ -164,7 +164,7 @@
          static const struct ecl_vector name ## _data = {                \
                  (int8_t)t_vector, 0, (type), 0,                         \
@@ -120,8 +120,8 @@
          static const cl_object name = (cl_object)(& name ## _data)
  
  #ifdef ECL_SSE2
---- src/h/stacks.h.orig	2021-02-01 05:59:46.000000000 -0700
-+++ src/h/stacks.h	2021-02-01 08:18:32.328218501 -0700
+--- src/h/stacks.h.orig	2023-09-08 10:55:48.000000000 -0600
++++ src/h/stacks.h	2023-09-10 09:34:34.151986870 -0600
 @@ -446,7 +446,7 @@ extern ECL_API ecl_frame_ptr _ecl_frs_pu
          } else {
  
