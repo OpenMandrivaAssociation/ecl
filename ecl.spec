@@ -149,6 +149,6 @@ install -pm 0644 %{SOURCE2} %{buildroot}%{_datadir}/icons/hicolor/scalable/apps/
 # appdata
 install -pm 0755 -d %{buildroot}%{_metainfodir}
 install -pm 0644 %{SOURCE3} %{buildroot}%{_metainfodir}
-#appstreamcli validate --no-net \
+appstreamcli validate --no-net \
 	%{buildroot}%{_metainfodir}/net.common-lisp.ecl.metainfo.xml
 
