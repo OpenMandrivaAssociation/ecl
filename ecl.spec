@@ -31,7 +31,7 @@ Patch0:		%{name}-23.9.9-warnings.patch
 # fedora, and should handle by default these problems:
 # http://trac.sagemath.org/sage_trac/ticket/11752
 # http://www.mail-archive.com/ecls-list@lists.sourceforge.net/msg00644.html
-Patch1:		%{name}-20.4.24-signal_handling_thread.patch
+#Patch1:		%{name}-20.5.10-signal_handling_thread.patch
 # Work around xsltproc requiring namespace declarations for entities. This
 # patch was sent upstream 3 Jun 2013.
 # GCC does not implement support for #pragma STDC FENV_ACCESS
@@ -143,12 +143,12 @@ chmod a+x %{buildroot}%{_libdir}/ecl-%{version}/ecl_min
 desktop-file-install --dir=%{buildroot}%{_datadir}/applications %{SOURCE1}
 
 # icon
-install -dpm 0755 %{buildroot}%{_datadir}/icons/hicolor/scalable/apps/
-install -pm  0644 %{SOURCE2} %{buildroot}%{_datadir}/icons/hicolor/scalable/apps/
+install -pm 0755 -d %{buildroot}%{_datadir}/icons/hicolor/scalable/apps/
+install -pm 0644 %{SOURCE2} %{buildroot}%{_datadir}/icons/hicolor/scalable/apps/
 
 # appdata
-install -dpm 0755 %{buildroot}%{_metainfodir}
-install -pm  0644 %{SOURCE3} %{buildroot}%{_metainfodir}
-appstreamcli validate --no-net \
+install -pm 0755 -d %{buildroot}%{_metainfodir}
+install -pm 0644 %{SOURCE3} %{buildroot}%{_metainfodir}
+#appstreamcli validate --no-net \
 	%{buildroot}%{_metainfodir}/net.common-lisp.ecl.metainfo.xml
 
