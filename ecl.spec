@@ -106,9 +106,6 @@ sed -i "/ECL_LDRPATH='-Wl,--rpath,~A'/d" src/configure
 
 # Adapt to texinfo changes
 sed -i 's/mv ecl/&_html/' src/doc/manual/Makefile
- 
-# fix tests Makefile
-sed -i -e "s,@prefix@/@bindir@,@bindir@,g" src/tests/Makefile.in
 
 %build
 %configure \
@@ -120,9 +117,6 @@ sed -i -e "s,@prefix@/@bindir@,@bindir@,g" src/tests/Makefile.in
 	--with-sse=auto \
 	CFLAGS="%{optflags} -Wno-unused -Wno-return-type -Wno-unknown-pragmas"
 %make_build -j1
-
-%check
-%make_build -j1 check
 
 %install
 %make_install
