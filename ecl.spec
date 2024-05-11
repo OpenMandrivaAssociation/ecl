@@ -107,6 +107,9 @@ sed -i "/ECL_LDRPATH='-Wl,--rpath,~A'/d" src/configure
 # Adapt to texinfo changes
 sed -i 's/mv ecl/&_html/' src/doc/manual/Makefile
  
+# fix tests Makefile
+sed -i -e "s,@prefix@/@bindir@,@bindir@,g" src/tests/Makefile.in
+
 %build
 %configure \
 	--disable-rpath \
