@@ -42,6 +42,11 @@ Patch3:		%{name}-20.4.24-write-error.patch
 # Fix bogus test compromised by LTO.
 Patch4:		%{name}-20.4.24-configure.patch
 
+BuildRequires:	autoconf
+BuildRequires:	automake
+BuildRequires:	libtool-base
+BuildRequires:	slibtool
+BuildRequires:	make
 BuildRequires:	appstream
 #BuildRequires:	docbook-schemas
 BuildRequires:	docbook-style-xsl
